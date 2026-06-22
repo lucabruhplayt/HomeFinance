@@ -291,7 +291,7 @@ export default function Login({ onBack, initialRegister = false }: Props) {
                 style={{
                   width: '100%', padding: '0.8125rem', borderRadius: '0.75rem',
                   fontSize: '0.9375rem', marginBottom: '0.875rem',
-                  opacity: busy ? 0.7 : 1,
+                  //opacity: busy ? 0.7 : 1,
                   ...anim('0.3s'),
                 }}>
                 {busy ? t('auth.processing') : (isRegister ? t('auth.createAccount') : t('auth.signIn'))}
