@@ -1,9 +1,10 @@
 import { TrendingUp, Receipt, Users } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import { CategoryPie, DailyBar } from '../components/Charts'
+import DailyReminder from '../components/DailyReminder'
 
 export default function Dashboard() {
-  const { state } = useFinance()
+  const { state, t, fa } = useFinance()
 
   const now = new Date()
   const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
@@ -18,10 +19,10 @@ export default function Dashboard() {
   }).reduce((s, e) => s + e.amount, 0)
 
   const stats = [
-    { label: 'Total cheltuieli', value: `${total.toFixed(2)} lei`, icon: <Receipt size={22} />, color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
-    { label: 'Medie / persoană', value: `${avgPerPerson.toFixed(2)} lei`, icon: <Users size={22} />, color: '#8B5CF6', bg: 'rgba(139,92,246,0.1)' },
-    { label: 'Ultimele 7 zile', value: `${lastMonth.toFixed(2)} lei`, icon: <TrendingUp size={22} />, color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
-    { label: 'Număr tranzacții', value: String(expenseCount), icon: <Receipt size={22} />, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
+    { label: t('dashboard.total'), value: fa(total), icon: <Receipt size={22} />, color: '#3B82F6', bg: 'rgba(59,130,246,0.1)' },
+    { label: t('dashboard.avg'), value: fa(avgPerPerson), icon: <Users size={22} />, color: '#8B5CF6', bg: 'rgba(139,92,246,0.1)' },
+    { label: t('dashboard.week'), value: fa(lastMonth), icon: <TrendingUp size={22} />, color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
+    { label: t('dashboard.count'), value: String(expenseCount), icon: <Receipt size={22} />, color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
   ]
 
   const catTotals = state.categories.map(c => {
@@ -31,10 +32,14 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.25rem' }}>Dashboard</h2>
-      <p style={{ color: '#71717a', fontSize: '0.875rem', marginBottom: '1.5rem' }}>
-        {month} — Rezumatul lunii
-      </p>
+      <div style={{ marginBottom: '1.5rem' }}>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.25rem' }}>{t('dashboard.title')}</h2>
+        <p style={{ color: '#71717a', fontSize: '0.875rem' }}>
+          {month} — {t('dashboard.subtitle')}
+        </p>
+      </div>
+
+      <DailyReminder />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
         {stats.map(s => (
@@ -56,25 +61,25 @@ export default function Dashboard() {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
         <div className="stat-card">
-          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.5rem' }}>Pe categorii</h3>
+          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.5rem' }}>{t('dashboard.byCategory')}</h3>
           <CategoryPie expenses={monthExpenses} categories={state.categories} />
         </div>
         <div className="stat-card">
-          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.5rem' }}>Zilnic</h3>
-          <DailyBar expenses={monthExpenses} />
+          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '0.5rem' }}>{t('dashboard.daily')}</h3>
+          <DailyBar expenses={monthExpenses} categories={state.categories} />
         </div>
       </div>
 
       {catTotals.length > 0 && (
         <div className="stat-card" style={{ marginTop: '1.5rem' }}>
-          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '1rem' }}>Descompunere categorii</h3>
+          <h3 style={{ fontSize: '0.9375rem', fontWeight: 600, marginBottom: '1rem' }}>{t('dashboard.breakdown')}</h3>
           {catTotals.map(c => {
             const pct = total > 0 ? (c.total / total * 100) : 0
             return (
               <div key={c.id} style={{ marginBottom: '0.75rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem', marginBottom: '0.25rem' }}>
                   <span style={{ fontWeight: 500 }}>{c.name}</span>
-                  <span>{c.total.toFixed(2)} lei ({pct.toFixed(0)}%)</span>
+                  <span>{fa(c.total)} ({pct.toFixed(0)}%)</span>
                 </div>
                 <div style={{ height: 8, background: '#f0f0f0', borderRadius: 4, overflow: 'hidden' }}>
                   <div style={{ width: `${pct}%`, height: '100%', background: c.color, borderRadius: 4, transition: 'width 0.5s' }} />

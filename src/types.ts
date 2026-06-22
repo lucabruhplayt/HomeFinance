@@ -3,6 +3,8 @@ export interface Member {
   name: string
   color: string
   avatar: string
+  photo?: string
+  photoId?: string
 }
 
 export interface Category {
@@ -19,7 +21,6 @@ export interface Expense {
   categoryId: string
   paidBy: string
   date: string
-  splitAmong: string[]
 }
 
 export interface Budget {
@@ -28,4 +29,18 @@ export interface Budget {
   month: string
 }
 
-export type Page = 'dashboard' | 'expenses' | 'budget' | 'categories' | 'members'
+export type Page = 'dashboard' | 'expenses' | 'budget' | 'categories' | 'members' | 'settings'
+
+export interface AppSettings {
+  currency: string
+  dateFormat: string
+  theme: 'light' | 'dark'
+  compactView: boolean
+  weekStart: 'monday' | 'sunday'
+  lang: 'ro' | 'en'
+  budgetAlert: boolean
+  budgetAlertPct: number
+  dailyReminder: boolean
+  primaryColor: string
+  accentColor: string
+}

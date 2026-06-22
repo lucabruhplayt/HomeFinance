@@ -25,6 +25,58 @@ body {
   background: var(--background);
   color: var(--text);
   min-height: 100vh;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+  --background: #09090B;
+  --text: #F4F4F5;
+  --secondary: #A1A1AA;
+  --glass-bg: rgba(24, 24, 27, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .input-field {
+  background: #18181B;
+  border-color: #27272A;
+  color: #F4F4F5;
+}
+
+body.dark .input-field:focus {
+  border-color: var(--cta);
+}
+
+body.dark select.input-field {
+  background-color: #18181B;
+}
+
+body.dark label {
+  color: #A1A1AA;
+}
+
+body.dark .stat-card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+body.dark table tr {
+  border-bottom-color: #27272A;
+}
+
+body.compact .stat-card {
+  padding: 1rem;
+}
+
+body.compact .modal-content {
+  padding: 1.5rem;
+}
+
+body.compact main {
+  padding: 1.5rem !important;
+}
+
+body.compact .stat-card h3 {
+  font-size: 0.875rem;
 }
 
 .glass {
@@ -142,10 +194,7 @@ body {
 }
 
 select.input-field {
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%233F3F46' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
+  appearance: auto;
 }
 
 label {
@@ -196,6 +245,84 @@ label {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #a1a1aa;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg) }
+  to { transform: rotate(360deg) }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px) }
+  to { opacity: 1; transform: translateY(0) }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95) }
+  to { opacity: 1; transform: scale(1) }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1) }
+  50% { transform: scale(1.05) }
+}
+
+@keyframes highlightPulse {
+  0% { transform: translateY(-6px) scale(0.97); opacity: 0; box-shadow: 0 0 0 rgba(37,99,235,0) }
+  10% { transform: translateY(0) scale(1); opacity: 1; box-shadow: 0 0 32px rgba(37,99,235,0.2) }
+  30% { transform: scale(1.01); box-shadow: 0 0 28px rgba(37,99,235,0.15) }
+  60% { box-shadow: 0 0 20px rgba(37,99,235,0.08) }
+  80% { transform: scale(1); opacity: 1; box-shadow: 0 0 12px rgba(37,99,235,0.04) }
+  100% { transform: scale(1); opacity: 1; box-shadow: var(--glass-shadow); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease both;
+}
+
+.slide-up {
+  animation: slideUp 0.35s ease both;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease both;
+}
+
+.expense-row:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.1) !important;
+  border-color: var(--cta) !important;
+}
+
+body.dark .expense-row:hover {
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4) !important;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 0.5rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  transform: scale(1.1);
+}
+
+body.dark .icon-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 @media (prefers-reduced-motion: reduce) {
