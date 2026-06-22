@@ -482,14 +482,14 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const saveSettings = useCallback(() => {
-    if (!user) return
+    if (!user) return Promise.resolve()
     const s = stateRef.current.settings
     markSaving()
-    databases.updateDocument(APPWRITE_DB_ID, 'settings', user.$id, s)
+    return databases.updateDocument(APPWRITE_DB_ID, 'settings', user.$id, s)
       .then(markSaved)
       .catch(err => {
         if (err.message?.includes('not found')) {
-          databases.createDocument(APPWRITE_DB_ID, 'settings', user.$id, {
+          return databases.createDocument(APPWRITE_DB_ID, 'settings', user.$id, {
             ...s,
             userId: user.$id,
           }).then(markSaved).catch(() => markError())

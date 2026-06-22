@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts'
 import { useFinance } from '../context/FinanceContext'
+import { useMediaQuery } from '../utils/useMediaQuery'
 import type { Expense, Category } from '../types'
 
 interface Props {
@@ -72,6 +73,7 @@ function CustomBarTooltip({ active, payload, label }: any) {
 }
 
 export function CategoryPie({ expenses, categories }: Props) {
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const data = categories.map(c => {
     const total = expenses.filter(e => e.categoryId === c.id).reduce((s, e) => s + e.amount, 0)
     return { name: c.name, value: total, color: c.color }
@@ -80,18 +82,19 @@ export function CategoryPie({ expenses, categories }: Props) {
   if (data.length === 0) return <p style={{ color: '#a1a1aa', fontSize: '0.875rem', textAlign: 'center', padding: '2rem' }}>Nicio cheltuială în această lună</p>
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer width="100%" height={isMobile ? 200 : 280}>
       <PieChart>
-        <Pie data={data} cx="50%" cy="50%" innerRadius={60} outerRadius={100} paddingAngle={3} dataKey="value">
+        <Pie data={data} cx="50%" cy="50%" innerRadius={isMobile ? 40 : 60} outerRadius={isMobile ? 72 : 100} paddingAngle={3} dataKey="value">
           {data.map((e, i) => <Cell key={i} fill={e.color} />)}
         </Pie>
-        <Tooltip content={<CustomPieTooltip />} position={{ x: 12, y: 115 }} />
+        <Tooltip content={<CustomPieTooltip />} position={{ x: 8, y: isMobile ? 80 : 115 }} />
       </PieChart>
     </ResponsiveContainer>
   )
 }
 
 export function DailyBar({ expenses, categories }: { expenses: Expense[]; categories: Category[] }) {
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const catMap = new Map(categories.map(c => [c.id, c]))
 
   const dayBuckets: Record<string, Record<string, number>> = {}
@@ -113,7 +116,7 @@ export function DailyBar({ expenses, categories }: { expenses: Expense[]; catego
     .sort((a, b) => Number(a.day) - Number(b.day))
 
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={isMobile ? 160 : 220}>
       <BarChart data={data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
         <XAxis dataKey="day" tick={{ fontSize: 12 }} />

@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
 import MemberForm from '../components/MemberForm'
+import { useMediaQuery } from '../utils/useMediaQuery'
 
 export default function Members() {
   const { state, removeMember, t, fa } = useFinance()
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const [showForm, setShowForm] = useState(false)
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', marginBottom: '1.5rem', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.75rem' : 0 }}>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 600 }}>{t('members.title')}</h2>
         <button type="button" className="btn-primary" onClick={() => setShowForm(true)}
           style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
@@ -43,8 +45,8 @@ export default function Members() {
                     {m.avatar}
                   </div>
                 )}
-                <div>
-                  <p style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{m.name}</p>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontWeight: 500, fontSize: '0.9375rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</p>
                   <p style={{ color: '#71717a', fontSize: '0.75rem' }}>
                     {t('members.paid')} {fa(paid)}
                   </p>

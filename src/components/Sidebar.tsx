@@ -13,9 +13,10 @@ const links: { page: Page; label: string; icon: React.ReactNode }[] = [
 interface Props {
   page: Page
   onPageChange: (p: Page) => void
+  isMobile: boolean
 }
 
-export default function Sidebar({ page, onPageChange }: Props) {
+export default function Sidebar({ page, onPageChange, isMobile }: Props) {
   const { saveStatus, t } = useFinance()
 
   const statusIcon = () => {
@@ -43,6 +44,70 @@ export default function Sidebar({ page, onPageChange }: Props) {
       case 'error': return '#FB7185'
       default: return 'transparent'
     }
+  }
+
+  if (isMobile) {
+    return (
+      <nav style={{
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: '#18181B',
+        display: 'flex',
+        alignItems: 'center',
+        zIndex: 40,
+        borderTop: '1px solid rgba(255,255,255,0.08)',
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      }}>
+        <style>{'nav::-webkit-scrollbar { display: none; }'}</style>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          padding: '0.375rem 0',
+          height: 72,
+          minWidth: '100%',
+          flexShrink: 0,
+        }}>
+        {[...links, { page: 'settings' as Page, label: 'nav.settings', icon: <Settings size={20} /> }].map(l => {
+          const active = page === l.page
+          return (
+            <button
+              key={l.page}
+              onClick={() => onPageChange(l.page)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '0.2rem',
+                padding: '0.5rem 0.375rem',
+                borderRadius: '0.625rem',
+                border: 'none',
+                background: active ? 'rgba(255,255,255,0.1)' : 'transparent',
+                color: active ? 'white' : 'rgba(255,255,255,0.45)',
+                cursor: 'pointer',
+                fontSize: '0.625rem',
+                fontWeight: active ? 500 : 400,
+                transition: 'all 0.2s',
+                minWidth: 56,
+                WebkitTapHighlightColor: 'transparent',
+                flexShrink: 0,
+              }}
+            >
+              {l.icon}
+              <span style={{ whiteSpace: 'nowrap' }}>{t(l.label)}</span>
+            </button>
+          )
+        })}
+        </div>
+      </nav>
+    )
   }
 
   return (

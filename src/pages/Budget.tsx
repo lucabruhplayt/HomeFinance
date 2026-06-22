@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { PiggyBank, AlertTriangle } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
+import { useMediaQuery } from '../utils/useMediaQuery'
 
 export default function Budget() {
   const { state, setBudget, t, fa } = useFinance()
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const [month, setMonth] = useState(new Date().toISOString().slice(0, 7))
   const [editing, setEditing] = useState<string | null>(null)
   const [editValue, setEditValue] = useState('')
@@ -27,16 +29,16 @@ export default function Budget() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', marginBottom: '1.5rem', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.75rem' : 0 }}>
         <div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.25rem' }}>{t('budget.title')}</h2>
           <p style={{ color: '#71717a', fontSize: '0.875rem' }}>{month}</p>
         </div>
-        <input className="input-field" style={{ maxWidth: 160 }} type="month" value={month} onChange={e => setMonth(e.target.value)} />
+        <input className="input-field" style={{ maxWidth: isMobile ? '100%' : 160 }} type="month" value={month} onChange={e => setMonth(e.target.value)} />
       </div>
 
-      <div className="stat-card" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-        <div style={{ width: 56, height: 56, borderRadius: '1rem', background: 'rgba(16,185,129,0.1)', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="stat-card" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem', flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : undefined }}>
+        <div style={{ width: 56, height: 56, borderRadius: '1rem', background: 'rgba(16,185,129,0.1)', color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
           <PiggyBank size={28} />
         </div>
         <div style={{ flex: 1 }}>
@@ -71,16 +73,16 @@ export default function Budget() {
           const alertPct = state.settings.budgetAlert && budgetAmt > 0 && pct >= state.settings.budgetAlertPct && pct < 100
 
           return (
-            <div key={cat.id} className="stat-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-              <div style={{ width: 40, height: 40, borderRadius: '0.75rem', background: `${cat.color}15`, color: cat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem' }}>
+            <div key={cat.id} className="stat-card" style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '0.625rem' : '1rem' }}>
+              <div style={{ width: isMobile ? 32 : 40, height: isMobile ? 32 : 40, borderRadius: '0.75rem', background: `${cat.color}15`, color: cat.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: isMobile ? '0.875rem' : '1rem', flexShrink: 0 }}>
                 {cat.name[0]}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 500, fontSize: '0.875rem' }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem', gap: '0.5rem' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.375rem', fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
                     {cat.name}
-                    {alertPct && <AlertTriangle size={14} style={{ color: '#f59e0b' }} />}
-                    {over && <AlertTriangle size={14} style={{ color: '#ef4444' }} />}
+                    {alertPct && <AlertTriangle size={14} style={{ color: '#f59e0b', flexShrink: 0 }} />}
+                    {over && <AlertTriangle size={14} style={{ color: '#ef4444', flexShrink: 0 }} />}
                   </span>
                   <span style={{ fontSize: '0.8125rem', color: over ? '#ef4444' : '#52525b' }}>
                     {fa(spent)} / {editing === cat.id ? (

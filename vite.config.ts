@@ -9,23 +9,65 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons.svg'],
+      includeAssets: ['favicon.ico', 'icon.svg', 'apple-touch-icon-180x180.png'],
       manifest: {
         name: 'HomeFinance',
         short_name: 'HomeFinance',
-        description: 'Gestionează-ți cheltuielile casei',
+        description: 'Gestioneaza-ti cheltuielile casei simplu si eficient.',
+        lang: 'ro',
         theme_color: '#2563EB',
-        background_color: '#FFFFFF',
+        background_color: '#FAFAFA',
         display: 'standalone',
-        orientation: 'portrait',
+        orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
+        categories: ['finance', 'productivity', 'lifestyle'],
         icons: [
           {
-            src: 'favicon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any maskable',
+            src: 'pwa-64x64.png',
+            sizes: '64x64',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: 'maskable-icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+          {
+            src: 'maskable-icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+        prefer_related_applications: false,
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,json,woff2}'],
+        cleanupOutdatedCaches: true,
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/cloud\.appwrite\.io\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'appwrite-api',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24,
+              },
+              networkTimeoutSeconds: 10,
+            },
           },
         ],
       },

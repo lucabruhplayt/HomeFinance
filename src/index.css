@@ -26,6 +26,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   transition: background 0.3s, color 0.3s;
+  overflow-x: hidden;
 }
 
 body.dark {
@@ -323,6 +324,22 @@ body.dark .expense-row:hover {
 
 body.dark .icon-btn:hover {
   background: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 767px) {
+  .stat-card {
+    padding: 1rem;
+  }
+  .modal-content {
+    padding: 1.25rem;
+    width: 95%;
+  }
+  body.compact main {
+    padding: 0.75rem !important;
+  }
+  main {
+    padding: 1rem !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

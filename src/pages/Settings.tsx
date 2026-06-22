@@ -1,12 +1,16 @@
 import { useState, useRef, useEffect } from 'react'
 import {
   Palette, Bell, Database, Globe, Info, Cloud,
-  Sun, Moon, Download, Upload, Trash2, RefreshCw, CheckCircle2, Loader2, AlertCircle,
+  Sun, Moon, Download, Upload, Trash2, RefreshCw, CheckCircle2, Loader2, AlertCircle, LogOut,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
+import { useAuth } from '../context/AuthContext'
+import { useMediaQuery } from '../utils/useMediaQuery'
 
 export default function Settings() {
   const { state, updateSettings, saveSettings, saveStatus, resetAll, removeExpense, t } = useFinance()
+  const { logout } = useAuth()
+  const isMobile = useMediaQuery('(max-width: 767px)')
 
   const { settings } = state
   const [resetConfirm, setResetConfirm] = useState(false)
@@ -88,7 +92,7 @@ export default function Settings() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', marginBottom: '1.5rem',             flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.75rem' : 0 }}>
         <div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.25rem' }}>{t('settings.title')}</h2>
           <p style={{ color: '#71717a', fontSize: '0.875rem' }}>{t('settings.subtitle')}</p>
@@ -110,7 +114,7 @@ export default function Settings() {
             <Globe size={20} style={{ color: '#3B82F6' }} />
             <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>{t('settings.general')}</h3>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.25rem' }}>
             <div>
               <label style={labelStyle}>{t('settings.currency')}</label>
               <select className="input-field" value={settings.currency}
@@ -156,7 +160,7 @@ export default function Settings() {
             <Palette size={20} style={{ color: '#8B5CF6' }} />
             <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>{t('settings.appearance')}</h3>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.25rem' }}>
             <div>
               <label style={labelStyle}>{t('settings.theme')}</label>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
@@ -277,8 +281,8 @@ export default function Settings() {
                 <Trash2 size={16} /> {t('settings.clearExpenses')}
               </button>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.75rem', background: '#fef2f2' }}>
-                <p style={{ fontSize: '0.8125rem', color: '#ef4444', flex: 1 }}>{t('settings.clearConfirm')}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.75rem', background: '#fef2f2', flexWrap: 'wrap' }}>
+                <p style={{ fontSize: '0.8125rem', color: '#ef4444', flex: '1 1 100%' }}>{t('settings.clearConfirm')}</p>
                 <button className="btn-danger" onClick={handleClearExpenses} style={{ fontSize: '0.8125rem' }}>{t('settings.yesDelete')}</button>
                 <button className="btn-secondary" onClick={() => setClearConfirm(false)} style={{ fontSize: '0.8125rem' }}>{t('form.cancel')}</button>
               </div>
@@ -290,8 +294,8 @@ export default function Settings() {
                 <RefreshCw size={16} /> {t('settings.resetAll')}
               </button>
             ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.75rem', background: '#fef2f2' }}>
-                <p style={{ fontSize: '0.8125rem', color: '#ef4444', flex: 1 }}>{t('settings.resetConfirm')}</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '0.75rem', borderRadius: '0.75rem', background: '#fef2f2', flexWrap: 'wrap' }}>
+                <p style={{ fontSize: '0.8125rem', color: '#ef4444', flex: '1 1 100%' }}>{t('settings.resetConfirm')}</p>
                 <button className="btn-danger" onClick={() => { resetAll(); setResetConfirm(false) }} style={{ fontSize: '0.8125rem' }}>{t('settings.yesReset')}</button>
                 <button className="btn-secondary" onClick={() => setClearConfirm(false)} style={{ fontSize: '0.8125rem' }}>{t('form.cancel')}</button>
               </div>
@@ -327,6 +331,19 @@ export default function Settings() {
               <span style={{ fontWeight: 500 }}>{state.categories.length}</span>
             </div>
           </div>
+        </div>
+
+        {/* Account */}
+        <div className="stat-card" style={sectionStyle}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', marginBottom: '1.25rem' }}>
+            <LogOut size={20} style={{ color: '#EF4444' }} />
+            <h3 style={{ fontSize: '0.9375rem', fontWeight: 600 }}>{t('settings.account')}</h3>
+          </div>
+          <p style={{ color: '#71717a', fontSize: '0.8125rem', marginBottom: '1rem' }}>{t('settings.accountDesc')}</p>
+          <button className="btn-danger" onClick={async () => { await saveSettings(); logout() }}
+            style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
+            <LogOut size={16} /> {t('settings.logout')}
+          </button>
         </div>
       </div>
     </div>

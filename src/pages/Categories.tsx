@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Plus, Trash2, Pencil, Palette, X, PiggyBank } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
+import { useMediaQuery } from '../utils/useMediaQuery'
 import type { Category } from '../types'
 
 const COLORS = ['#F97316', '#EAB308', '#3B82F6', '#8B5CF6', '#EC4899', '#EF4444', '#14B8A6', '#84CC16', '#D946EF', '#06B6D4', '#F43F5E', '#6B7280']
@@ -8,6 +9,7 @@ const EMOJIS = ['🍕', '🚗', '🏠', '⚡', '🎬', '💊', '📚', '🛍️'
 
 export default function Categories() {
   const { state, addCategory, updateCategory, setBudget, removeCategory, t, fa } = useFinance()
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const [showForm, setShowForm] = useState(false)
   const [editingCat, setEditingCat] = useState<Category | null>(null)
   const [name, setName] = useState('')
@@ -67,7 +69,7 @@ export default function Categories() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-start', marginBottom: '1.5rem', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '0.75rem' : 0 }}>
         <div>
           <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.25rem' }}>{t('categories.title')}</h2>
           <p style={{ color: '#71717a', fontSize: '0.875rem' }}>{state.categories.length} {t('common.categories')}</p>
@@ -102,10 +104,10 @@ export default function Categories() {
                 {EMOJIS.map(e => (
                   <button key={e} type="button" onClick={() => setEmoji(e)}
                     style={{
-                      width: 36, height: 36, borderRadius: '0.5rem', border: '2px solid',
+                      width: isMobile ? 32 : 36, height: isMobile ? 32 : 36, borderRadius: '0.5rem', border: '2px solid',
                       borderColor: e === emoji ? color : 'transparent',
                       background: e === emoji ? `${color}20` : '#f4f4f5',
-                      cursor: 'pointer', fontSize: '1.125rem',
+                      cursor: 'pointer', fontSize: isMobile ? '1rem' : '1.125rem',
                       transition: 'all 0.2s',
                     }}>
                     {e}
@@ -122,7 +124,7 @@ export default function Categories() {
                 {COLORS.map(c => (
                   <button key={c} type="button" onClick={() => setColor(c)}
                     style={{
-                      width: 32, height: 32, borderRadius: '50%', border: '2px solid',
+                      width: isMobile ? 28 : 32, height: isMobile ? 28 : 32, borderRadius: '50%', border: '2px solid',
                       borderColor: c === color ? c : 'transparent',
                       background: c, cursor: 'pointer',
                       outline: c === color ? `3px solid ${c}40` : 'none',
@@ -143,16 +145,16 @@ export default function Categories() {
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
               <div style={{
-                width: 48, height: 48, borderRadius: '0.75rem',
+                width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, borderRadius: '0.75rem',
                 background: `${color}20`, color,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: '1.25rem',
+                fontSize: isMobile ? '1.125rem' : '1.25rem', flexShrink: 0,
               }}>
                 {emoji}
               </div>
-              <div>
+              <div style={{ minWidth: 0 }}>
                 <p style={{ fontWeight: 500, fontSize: '0.875rem' }}>{name || 'Nume'}</p>
-                <p style={{ fontSize: '0.75rem', color: '#71717a' }}>Previzualizare</p>
+                <p style={{ fontSize: '0.6875rem', color: '#71717a' }}>Previzualizare</p>
               </div>
             </div>
 
@@ -176,18 +178,19 @@ export default function Categories() {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '1rem 1.25rem',
               animation: `slideUp 0.25s ease ${i * 0.03}s both`,
+              gap: isMobile ? '0.5rem' : undefined,
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flex: 1, minWidth: 0 }}>
                 <div style={{
                   width: 40, height: 40, borderRadius: '0.75rem',
                   background: `${cat.color}20`, color: cat.color,
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '1.125rem',
+                  fontSize: '1.125rem', flexShrink: 0,
                 }}>
                   {displayIcon}
                 </div>
-                <div>
-                  <p style={{ fontWeight: 500, fontSize: '0.875rem' }}>{cat.name}</p>
+                <div style={{ minWidth: 0 }}>
+                  <p style={{ fontWeight: 500, fontSize: '0.875rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{cat.name}</p>
                   <p style={{ color: '#71717a', fontSize: '0.75rem' }}>
                     <span>{state.expenses.filter(e => e.categoryId === cat.id).length} {t('categories.expenses')}</span>
                     {(budgetAmt > 0 || editingBudget === cat.id) && (

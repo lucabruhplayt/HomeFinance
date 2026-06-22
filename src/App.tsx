@@ -9,11 +9,13 @@ import Categories from './pages/Categories'
 import Members from './pages/Members'
 import Settings from './pages/Settings'
 import Login from './pages/Login'
+import { useMediaQuery } from './utils/useMediaQuery'
 import type { Page } from './types'
 
 function AppContent() {
   const [page, setPage] = useState<Page>('dashboard')
   const { state } = useFinance()
+  const isMobile = useMediaQuery('(max-width: 767px)')
 
   useEffect(() => {
     document.body.classList.toggle('dark', state.settings.theme === 'dark')
@@ -32,9 +34,16 @@ function AppContent() {
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar page={page} onPageChange={setPage} />
-      <main style={{ flex: 1, marginLeft: 'var(--sidebar-width)', padding: '2rem', overflow: 'auto' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column' }}>
+      <Sidebar page={page} onPageChange={setPage} isMobile={isMobile} />
+      <main style={{
+        flex: 1,
+        marginLeft: isMobile ? 0 : 'var(--sidebar-width)',
+        marginBottom: isMobile ? 72 : 0,
+        padding: isMobile ? '1rem' : '2rem',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+      }}>
         {pages[page]}
       </main>
     </div>

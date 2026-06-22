@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
+import { useMediaQuery } from '../utils/useMediaQuery'
 import type { Expense } from '../types'
 
 interface Props {
@@ -10,6 +11,7 @@ interface Props {
 
 export default function ExpenseForm({ onClose, editExpense }: Props) {
   const { state, addExpense, updateExpense, t } = useFinance()
+  const isMobile = useMediaQuery('(max-width: 767px)')
   const [amount, setAmount] = useState('')
   const [description, setDescription] = useState('')
   const [categoryId, setCategoryId] = useState(state.categories[0]?.id || '')
@@ -63,7 +65,7 @@ export default function ExpenseForm({ onClose, editExpense }: Props) {
               value={description} onChange={e => setDescription(e.target.value)} placeholder="Ex: Cumpărături săptămânale" />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
             <div>
               <label>{t('form.category')}</label>
               <select className="input-field" value={categoryId} onChange={e => setCategoryId(e.target.value)}>
