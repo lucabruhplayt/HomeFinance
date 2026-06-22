@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react'
 import { account, ID } from '../lib/appwrite'
+import { persistLoginSession, refreshSessionIfNeeded, clearSessionPersistence } from '../lib/session'
 import { AuthenticationFactor, type Models } from 'appwrite'
 
 interface AuthContextType {
@@ -25,7 +26,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     account.get()
-      .then(u => setUser(u))
+      .then(async u => {
+        const valid = await refreshSessionIfNeeded(account)
+        setUser(valid ? u : null)
+      })
       .catch(() => setUser(null))
       .finally(() => setLoading(false))
   }, [])
@@ -38,6 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(null)
         setMfaPending(true)
       } else {
+        await persistLoginSession(account)
         setUser(u)
       }
     } catch {
@@ -54,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await account.deleteSession('current').catch(() => {})
+    clearSessionPersistence()
     setUser(null)
     setMfaPending(false)
     setMfaChallengeId(null)
@@ -68,6 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!mfaChallengeId) throw new Error('No MFA challenge in progress')
     await account.updateMFAChallenge({ challengeId: mfaChallengeId, otp })
     const u = await account.get()
+    await persistLoginSession(account)
     setUser(u)
     setMfaPending(false)
     setMfaChallengeId(null)

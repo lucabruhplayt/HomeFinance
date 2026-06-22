@@ -30,9 +30,9 @@ export default function Sidebar({ page, onPageChange, isMobile }: Props) {
 
   const statusText = () => {
     switch (saveStatus) {
-      case 'saving': return 'Se salvează...'
-      case 'saved': return 'Salvat'
-      case 'error': return 'Eroare la salvare'
+      case 'saving': return t('auth.save.saving')
+      case 'saved': return t('auth.save.saved')
+      case 'error': return t('auth.save.error')
       default: return ''
     }
   }

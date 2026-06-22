@@ -4,11 +4,14 @@ import {
   Sun, Moon, Download, Upload, Trash2, RefreshCw, CheckCircle2, Loader2, AlertCircle, LogOut,
 } from 'lucide-react'
 import { useFinance } from '../context/FinanceContext'
+import { useLocale } from '../context/LocaleContext'
+import { markLangManual } from '../utils/detectLocale'
 import { useAuth } from '../context/AuthContext'
 import { useMediaQuery } from '../utils/useMediaQuery'
 
 export default function Settings() {
   const { state, updateSettings, saveSettings, saveStatus, resetAll, removeExpense, t } = useFinance()
+  const { setLang } = useLocale()
   const { logout } = useAuth()
   const isMobile = useMediaQuery('(max-width: 767px)')
 
@@ -138,7 +141,12 @@ export default function Settings() {
             <div>
               <label style={labelStyle}>{t('settings.language')}</label>
               <select className="input-field" value={settings.lang}
-                onChange={e => updateSettings({ lang: e.target.value as 'ro' | 'en' })}>
+                onChange={e => {
+                  const lang = e.target.value as 'ro' | 'en'
+                  markLangManual()
+                  setLang(lang)
+                  updateSettings({ lang })
+                }}>
                 <option value="ro">Română</option>
                 <option value="en">English</option>
               </select>

@@ -1,5 +1,6 @@
 import { useState, useEffect, type ReactNode } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
+import { LocaleProvider, useLocale } from './context/LocaleContext'
 import { FinanceProvider, useFinance } from './context/FinanceContext'
 import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
@@ -8,9 +9,12 @@ import Budget from './pages/Budget'
 import Categories from './pages/Categories'
 import Members from './pages/Members'
 import Settings from './pages/Settings'
+import Landing from './pages/Landing'
 import Login from './pages/Login'
 import { useMediaQuery } from './utils/useMediaQuery'
 import type { Page } from './types'
+
+type AuthScreen = 'landing' | 'login' | 'register'
 
 function AppContent() {
   const [page, setPage] = useState<Page>('dashboard')
@@ -52,25 +56,45 @@ function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <FinanceProvider>
-        <Main />
-      </FinanceProvider>
-    </AuthProvider>
+    <LocaleProvider>
+      <AuthProvider>
+        <FinanceProvider>
+          <Main />
+        </FinanceProvider>
+      </AuthProvider>
+    </LocaleProvider>
   )
 }
 
 function Main() {
   const { user, loading } = useAuth()
+  const { t, ready: localeReady } = useLocale()
+  const [authScreen, setAuthScreen] = useState<AuthScreen>('landing')
 
-  if (loading) {
+  if (loading || !localeReady) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fafafa' }}>
-        <p style={{ color: '#71717a', fontSize: '0.9375rem' }}>Se încarcă...</p>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#0A0A1A' }}>
+        <p style={{ color: '#71717a', fontSize: '0.9375rem' }}>{t('auth.loading')}</p>
       </div>
     )
   }
 
-  if (!user) return <Login />
+  if (!user) {
+    if (authScreen === 'landing') {
+      return (
+        <Landing
+          onLogin={() => setAuthScreen('login')}
+          onRegister={() => setAuthScreen('register')}
+        />
+      )
+    }
+    return (
+      <Login
+        onBack={() => setAuthScreen('landing')}
+        initialRegister={authScreen === 'register'}
+      />
+    )
+  }
+
   return <AppContent />
 }

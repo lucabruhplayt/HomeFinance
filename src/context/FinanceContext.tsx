@@ -4,6 +4,8 @@ import { formatAmount as fmtAmount, formatDate as fmtDate } from '../utils/forma
 import { t as translate } from '../utils/i18n'
 import { databases, storage, ID, Query, APPWRITE_DB_ID, APPWRITE_BUCKET_ID } from '../lib/appwrite'
 import { useAuth } from './AuthContext'
+import { useLocale } from './LocaleContext'
+import { isLangManual } from '../utils/detectLocale'
 
 export type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
@@ -291,6 +293,7 @@ async function migrateToAppwrite(userId: string, state: State) {
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth()
+  const { lang: localeLang, ready: localeReady } = useLocale()
   const [state, dispatch] = useReducer(reducer, initialState)
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const initRef = useRef(true)
@@ -316,6 +319,13 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     clearStatusTimer()
     statusTimerRef.current = setTimeout(() => setSaveStatus('idle'), 4000)
   }, [clearStatusTimer])
+
+  useEffect(() => {
+    if (!localeReady || isLangManual()) return
+    if (state.settings.lang !== localeLang) {
+      dispatch({ type: 'UPDATE_SETTINGS', payload: { lang: localeLang } })
+    }
+  }, [localeReady, localeLang, state.settings.lang])
 
   useEffect(() => {
     if (initRef.current) { initRef.current = false; return }
